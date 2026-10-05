@@ -9,12 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -27,8 +26,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         buildUi(stage);
-        Input = new GlobalInputService();
-        Input.startListening();
+        Input = new GlobalInputService(true);
     }
 
     @Override
@@ -47,31 +45,18 @@ public class App extends Application {
         Image pearIcon = new Image(assets.resolve("pear32.png").toUri().toString());
 
         // Brand colors
-        String pearGreen = "#8BC34A";
-        String pearGreenDark = "#689F38";
         String surface = "#F7F8F4";
         String card = "#FFFFFF";
         String ink = "#1B1F16";
         String muted = "#6B7265";
         String stroke = "#D9DDD2";
 
-        // --- Logo (square frame, smaller pear) ---
+        // --- Logo (transparent pear, no frame) ---
         ImageView logo = new ImageView(pearImage);
-        logo.setFitWidth(30);
-        logo.setFitHeight(30);
+        logo.setFitWidth(78);
+        logo.setFitHeight(78);
         logo.setPreserveRatio(true);
         logo.setSmooth(true);
-
-        StackPane logoFrame = new StackPane(logo);
-        logoFrame.setPrefSize(48, 48);
-        logoFrame.setMaxSize(48, 48);
-        logoFrame.setStyle(
-            "-fx-background-color: " + pearGreen + ";"
-            + "-fx-border-color: " + pearGreenDark + ";"
-            + "-fx-border-width: 2;"
-            + "-fx-padding: 6;"
-        );
-        logoFrame.setEffect(new DropShadow(10, Color.web("#00000022")));
 
         Label title = new Label("Project PEAR");
         title.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
@@ -81,7 +66,7 @@ public class App extends Application {
         subtitle.setFont(Font.font("Segoe UI", 12));
         subtitle.setTextFill(Color.web(muted));
 
-        VBox header = new VBox(6, logoFrame, title, subtitle);
+        VBox header = new VBox(6, logo, title, subtitle);
         header.setAlignment(Pos.CENTER);
 
         // --- Hotkey row: button + read-only field (visual only) ---
@@ -95,6 +80,8 @@ public class App extends Application {
 
         TextField hotkeyField = new TextField("Not set");
         hotkeyField.setEditable(false);
+        // Immidiately consume context menu events to prevent the menu from opening on this control.
+        hotkeyField.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, e -> e.consume());
         hotkeyField.setFocusTraversable(false);
         hotkeyField.setPrefHeight(36);
         hotkeyField.setFont(Font.font("Segoe UI", FontWeight.MEDIUM, 13));
@@ -133,7 +120,6 @@ public class App extends Application {
             + "-fx-border-color: " + stroke + ";"
             + "-fx-border-width: 1.5;"
         );
-        statusBar.setEffect(new DropShadow(8, Color.web("#00000012")));
 
         VBox root = new VBox(28, header, hotkeyRow, statusBar);
         root.setAlignment(Pos.TOP_CENTER);

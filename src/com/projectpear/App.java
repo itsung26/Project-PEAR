@@ -136,11 +136,11 @@ public class App extends Application {
         stage.show();
     }
 
-    private void onHotkeyPressed(HotkeyBinding hotkey) {
+    private void onHotkeyPressed(Hotkey hotkey) {
 
     }
 
-    private void onHotKeyCaptured(HotkeyBinding hotkey) {
+    private void onHotKeyCaptured(Hotkey hotkey) {
 
     }
 }

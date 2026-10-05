@@ -1,9 +1,9 @@
 package com.projectpear;
 
 public class Settings {
-    HotkeyBinding binding;
+    Hotkey binding;
 
-    // public HotkeyBinding loadBinding() {
+    // public Hotkey loadBinding() {
     // TODO: Implement
     // }
 

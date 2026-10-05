@@ -2,6 +2,8 @@ package com.projectpear;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
 
 /**
  * Manages system-wide keyboard and mouse input listening via JNativeHook.
@@ -18,19 +20,23 @@ import com.github.kwhat.jnativehook.NativeHookException;
  * }</pre>
  */
 public class GlobalInputService {
-    /** Listener that receives global keyboard events. */
-    private KeyHook keyHook;
+    private final KeyHook keyHook;
+    private final MouseButtonHook mouseButtonHook;
+    private final HotkeyPressListener pressListener;
+    private final HotkeyCaptureListener captureListener;
+    private boolean capturing;
 
-    /** Listener that receives global mouse-button events. */
-    private MouseButtonHook mouseButtonHook;
 
     /**
      * Creates a new service with key and mouse listeners ready, but does not
      * begin listening until {@link #startListening()} is called.
      */
     public GlobalInputService(HotkeyPressListener pressListener, HotkeyCaptureListener captureListener) {
-        keyHook = new KeyHook();
-        mouseButtonHook = new MouseButtonHook();
+        keyHook = new KeyHook(this);
+        mouseButtonHook = new MouseButtonHook(this);
+        this.pressListener = pressListener;
+        this.captureListener = captureListener;
+        capturing = false;
     }
 
     /**
@@ -44,6 +50,10 @@ public class GlobalInputService {
         if (startListeningImmediately) {
             startListening();
         }
+    }
+
+    public void setCapturing(boolean capturing) {
+        this.capturing = capturing;
     }
 
     /**
@@ -83,5 +93,27 @@ public class GlobalInputService {
 			System.err.println("There was a problem unregistering the native hook.");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Receives a global key-press event forwarded from {@link KeyHook}.
+     *
+     * @param event the native key event
+     */
+    public void onKeyPressed(NativeKeyEvent event) {
+        
+
+        if (capturing) {
+            capturing = false;
+            captureListener.onCapture(null);
+        }
+    }
+
+    /**
+     * Receives a global mouse-button-press event forwarded from {@link MouseButtonHook}.
+     *
+     * @param event the native mouse event
+     */
+    public void onMousePressed(NativeMouseEvent event) {
     }
 }

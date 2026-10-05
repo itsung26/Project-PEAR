@@ -13,10 +13,6 @@
 	<classpathentry kind="lib" path="lib/jdk.jsobject.jar" sourcepath="lib/src.zip"/>
 	<classpathentry kind="lib" path="lib/jfx.incubator.input.jar" sourcepath="lib/src.zip"/>
 	<classpathentry kind="lib" path="lib/jfx.incubator.richtext.jar" sourcepath="lib/src.zip"/>
-	<classpathentry kind="lib" path="lib/jnativehook-2.2.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/Project-PEAR/lib/javadoc/jnativehook-2.2.2-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="lib/jnativehook-2.2.2.jar" sourcepath="lib/jnativehook-2.2.2-sources.jar"/>
 	<classpathentry kind="output" path="out"/>
 </classpath>

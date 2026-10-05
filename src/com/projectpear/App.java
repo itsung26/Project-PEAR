@@ -12,12 +12,18 @@ public class App extends Application {
     public void start(Stage stage) {
         buildUi(stage);
         Input = new GlobalInputService();
-        
+        Input.startListening();
     }
+
+    @Override
+    public void stop() {
+        Input.stopListening();
+        System.out.println("Application exit. (Exit code 0)");
+    }
+
 
     public static void main(String[] args) {
         launch(args);
-        System.out.println("Application exit. (0)");
     }
 
     private void buildUi(Stage stage) {

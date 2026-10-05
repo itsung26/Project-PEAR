@@ -8,7 +8,8 @@
             "lib/*.jar"
         ],
         "exclude": [
-            "lib/javadoc/**"
+            "lib/*-sources.jar",
+            "lib/*-javadoc.jar"
         ],
         "sources": {
             "lib/javafx.base.jar": "lib/src.zip",
@@ -21,7 +22,8 @@
             "lib/javafx-swt.jar": "lib/src.zip",
             "lib/jdk.jsobject.jar": "lib/src.zip",
             "lib/jfx.incubator.input.jar": "lib/src.zip",
-            "lib/jfx.incubator.richtext.jar": "lib/src.zip"
+            "lib/jfx.incubator.richtext.jar": "lib/src.zip",
+            "lib/jnativehook-2.2.2.jar": "lib/jnativehook-2.2.2-sources.jar"
         }
     }
 }

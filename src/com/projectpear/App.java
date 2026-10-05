@@ -64,7 +64,7 @@ public class App extends Application {
         title.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
         title.setTextFill(Color.web(ink));
 
-        Label subtitle = new Label("1.0.0");
+        Label subtitle = new Label("Lightweight lag switch utility");
         subtitle.setFont(Font.font("Segoe UI", 12));
         subtitle.setTextFill(Color.web(muted));
 
@@ -137,7 +137,7 @@ public class App extends Application {
     }
 
     private void onHotkeyPressed(Hotkey hotkey) {
-
+        
     }
 
     private void onHotKeyCaptured(Hotkey hotkey) {

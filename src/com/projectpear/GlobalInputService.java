@@ -101,11 +101,11 @@ public class GlobalInputService {
      * @param event the native key event
      */
     public void onKeyPressed(NativeKeyEvent event) {
-        
+        Hotkey binding = new Hotkey(event);
 
         if (capturing) {
             capturing = false;
-            captureListener.onCapture(null);
+            captureListener.onCapture(binding);
         }
     }
 
@@ -115,5 +115,11 @@ public class GlobalInputService {
      * @param event the native mouse event
      */
     public void onMousePressed(NativeMouseEvent event) {
+        Hotkey binding = new Hotkey(event);
+
+        if (capturing) {
+            capturing = false;
+            captureListener.onCapture(binding);
+        }
     }
 }

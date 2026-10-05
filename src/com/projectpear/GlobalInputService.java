@@ -28,7 +28,7 @@ public class GlobalInputService {
      * Creates a new service with key and mouse listeners ready, but does not
      * begin listening until {@link #startListening()} is called.
      */
-    public GlobalInputService() {
+    public GlobalInputService(HotkeyPressListener pressListener, HotkeyCaptureListener captureListener) {
         keyHook = new KeyHook();
         mouseButtonHook = new MouseButtonHook();
     }
@@ -39,8 +39,8 @@ public class GlobalInputService {
      * @param startListeningImmediately if {@code true}, registers the native
      *                                  hook and attaches listeners right away
      */
-    public GlobalInputService(boolean startListeningImmediately) {
-        this();
+    public GlobalInputService(HotkeyPressListener pressListener, HotkeyCaptureListener captureListener, boolean startListeningImmediately) {
+        this(pressListener, captureListener);
         if (startListeningImmediately) {
             startListening();
         }

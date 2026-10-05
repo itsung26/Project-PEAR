@@ -26,7 +26,9 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         buildUi(stage);
-        Input = new GlobalInputService(true);
+        Input = new GlobalInputService(
+            this::onHotkeyPressed, this::onHotKeyCaptured, true
+        );
     }
 
     @Override
@@ -132,5 +134,13 @@ public class App extends Application {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void onHotkeyPressed(HotkeyBinding hotkey) {
+
+    }
+
+    private void onHotKeyCaptured(HotkeyBinding hotkey) {
+
     }
 }

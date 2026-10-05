@@ -8,13 +8,4 @@ public class MouseButtonHook implements NativeMouseListener {
     public void nativeMousePressed(NativeMouseEvent event) {
         System.out.println("Mouse Pressed: " + event.getButton());
     }
-
-    @Override 
-    public void nativeMouseClicked(NativeMouseEvent event) {
-        // System.out.println("Mouse Clicked: " + event.getButton());
-    }
-
-    @Override
-    public void nativeMouseReleased(NativeMouseEvent event) {
-    }
 }

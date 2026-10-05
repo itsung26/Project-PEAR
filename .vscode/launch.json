@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "PEAR",
+            "request": "launch",
+            "mainClass": "com.projectpear.App",
+            "cwd": "${workspaceFolder}",
+            "modulePaths": [
+                "${workspaceFolder}/lib/javafx.base.jar",
+                "${workspaceFolder}/lib/javafx.graphics.jar",
+                "${workspaceFolder}/lib/javafx.controls.jar",
+                "${workspaceFolder}/lib/javafx.fxml.jar",
+                "${workspaceFolder}/lib/javafx.media.jar",
+                "${workspaceFolder}/lib/javafx.swing.jar",
+                "${workspaceFolder}/lib/javafx.web.jar",
+                "${workspaceFolder}/lib/jdk.jsobject.jar"
+            ],
+            "classPaths": [
+                "${workspaceFolder}/out",
+                "${workspaceFolder}/lib/jnativehook-2.2.2.jar"
+            ],
+            "vmArgs": "--add-modules javafx.controls,javafx.fxml -Djava.library.path=\"${workspaceFolder}/jfx-bin\""
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "java.import.maven.enabled": false,
+    "java.import.gradle.enabled": false,
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "out",
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/*.jar"
+        ],
+        "exclude": [
+            "lib/javadoc/**"
+        ],
+        "sources": {
+            "lib/javafx.base.jar": "lib/src.zip",
+            "lib/javafx.graphics.jar": "lib/src.zip",
+            "lib/javafx.controls.jar": "lib/src.zip",
+            "lib/javafx.fxml.jar": "lib/src.zip",
+            "lib/javafx.media.jar": "lib/src.zip",
+            "lib/javafx.swing.jar": "lib/src.zip",
+            "lib/javafx.web.jar": "lib/src.zip",
+            "lib/javafx-swt.jar": "lib/src.zip",
+            "lib/jdk.jsobject.jar": "lib/src.zip",
+            "lib/jfx.incubator.input.jar": "lib/src.zip",
+            "lib/jfx.incubator.richtext.jar": "lib/src.zip"
+        }
+    }
+}

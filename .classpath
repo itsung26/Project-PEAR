@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/javafx.base.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/javafx.graphics.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/javafx.controls.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/javafx.fxml.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/javafx.media.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/javafx.swing.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/javafx.web.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/javafx-swt.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/jdk.jsobject.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/jfx.incubator.input.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/jfx.incubator.richtext.jar" sourcepath="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/jnativehook-2.2.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Project-PEAR/lib/javadoc/jnativehook-2.2.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="out"/>
+</classpath>

@@ -77,7 +77,7 @@ public class App extends Application {
         title.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
         title.setTextFill(Color.web(ink));
 
-        Label subtitle = new Label("Placeholder subtitle");
+        Label subtitle = new Label("1.0.0");
         subtitle.setFont(Font.font("Segoe UI", 12));
         subtitle.setTextFill(Color.web(muted));
 

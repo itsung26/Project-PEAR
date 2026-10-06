@@ -193,7 +193,6 @@ public class App extends Application {
 
     // Called only when the set hotkey is pressed.
     private void onHotkeyPressed(Hotkey hotkey) {
-        System.out.println(hotkey.toString() + " hotkey pressed. Toggling Lag.");
         setLagActive(!isLagActive());
     }
 
@@ -225,12 +224,12 @@ public class App extends Application {
 
     private void setLagActive(boolean lagActive) {
         this.lagActive = lagActive;
+        Platform.runLater(() -> updateGuiStatusBar(lagActive));
         if (lagActive) {
             WindowsCommandLine.run(WindowsCommandLine.FIREWALL_BLOCK_ALL);
         } else {
             WindowsCommandLine.run(WindowsCommandLine.FIREWALL_ALLOW_ALL);
         }
-        Platform.runLater(() -> updateGuiStatusBar(lagActive));
     }
 
     private void updateGuiStatusBar(boolean lagState) {

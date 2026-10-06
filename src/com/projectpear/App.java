@@ -23,15 +23,23 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class App extends Application {
     private GlobalInputService Input;
     private Settings settings;
     private Button guiHotkeyButton;
     private TextField guiHotkeyField;
+    private HBox guiStatusBar;
+    private boolean lagActive = false;
+
 
     @Override
     public void start(Stage stage) {
+        if (!isRunningElevated()) {
+            throw new SecurityException("Application requires elevated permissions.");
+        }
+
         settings = new Settings();
         if (settings.saveFileExists()) {
             settings.load();
@@ -49,15 +57,21 @@ public class App extends Application {
         // Tell the input handler what the initial hotkey is.
         Input.setHotkey(settings.getBoundHotkey());
 
+        // --- Initial UI updates --------------------------------------
         // Update the hotkey readout.
         Platform.runLater(
             () -> guiHotkeyField.setText(settings.getBoundHotkey().getBindingName())
         );
+        Platform.runLater(
+            () -> updateGuiStatusBar(false)
+        );
+
     }
 
     @Override
     public void stop() {
         Input.stopListening();
+        setLagActive(false);
         System.out.println("Application exit. (Exit code 0)");
     }
 
@@ -150,6 +164,8 @@ public class App extends Application {
             + "-fx-border-color: " + stroke + ";"
             + "-fx-border-width: 1.5;"
         );
+        // Cache the status bar for later ui updates.
+        guiStatusBar = statusBar;
 
         VBox root = new VBox(28, header, hotkeyRow, statusBar);
         root.setAlignment(Pos.TOP_CENTER);
@@ -177,7 +193,8 @@ public class App extends Application {
 
     // Called only when the set hotkey is pressed.
     private void onHotkeyPressed(Hotkey hotkey) {
-        System.out.println(hotkey.toString() + " hotkey pressed");
+        System.out.println(hotkey.toString() + " hotkey pressed. Toggling Lag.");
+        setLagActive(!isLagActive());
     }
 
     // Called when a button is pressed while the app is listening for a new hotkey to be set.
@@ -192,5 +209,54 @@ public class App extends Application {
         Platform.runLater(
             () -> guiHotkeyButton.setDisable(false)
         );
+    }
+
+    private boolean isRunningElevated() {
+        String ret = WindowsCommandLine.run(WindowsCommandLine.ELEVATED_QUERY).trim();
+        if (ret != null) {
+            return ret.equals("Elevated");
+        }
+        return false;
+    }
+
+    private boolean isLagActive() {
+        return lagActive;
+    }
+
+    private void setLagActive(boolean lagActive) {
+        this.lagActive = lagActive;
+        if (lagActive) {
+            WindowsCommandLine.run(WindowsCommandLine.FIREWALL_BLOCK_ALL);
+        } else {
+            WindowsCommandLine.run(WindowsCommandLine.FIREWALL_ALLOW_ALL);
+        }
+        Platform.runLater(() -> updateGuiStatusBar(lagActive));
+    }
+
+    private void updateGuiStatusBar(boolean lagState) {
+        if (guiStatusBar == null || guiStatusBar.getChildren().size() < 2) {
+            return;
+        }
+
+        Label statusDot = (Label) guiStatusBar.getChildren().get(0);
+        Label statusLabel = (Label) guiStatusBar.getChildren().get(1);
+
+        if (lagState) {
+            statusLabel.setText("Lag active");
+            statusDot.setTextFill(Color.web("#2E7D32"));
+            guiStatusBar.setStyle(
+                "-fx-background-color: #E8F5E9;"
+                + "-fx-border-color: #A5D6A7;"
+                + "-fx-border-width: 1.5;"
+            );
+        } else {
+            statusLabel.setText("Lag inactive");
+            statusDot.setTextFill(Color.web("#C62828"));
+            guiStatusBar.setStyle(
+                "-fx-background-color: #FFEBEE;"
+                + "-fx-border-color: #EF9A9A;"
+                + "-fx-border-width: 1.5;"
+            );
+        }
     }
 }

@@ -3,11 +3,25 @@ package com.projectpear;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
 
+/**
+ * Immutable value representing a single bound input: a keyboard key or mouse button.
+ *
+ * <p>Identity is {@code code} plus {@code isMouseButton} (key and mouse codes can
+ * overlap numerically). {@code bindingName} is a display label resolved from
+ * {@link BindingNames}.
+ *
+ * <p>Construct from a live JNativeHook event, or from stored type/code when loading
+ * settings. Unsupported codes throw {@link IllegalArgumentException}.
+ */
 public class Hotkey {
 
     /**
-     * Binding labels keyed by native key codes ({@link NativeKeyEvent} {@code VC_*}
-     * constants) or mouse button codes ({@link NativeMouseEvent} {@code BUTTON*}).
+     * Supported bind targets: native key codes ({@link NativeKeyEvent} {@code VC_*}
+     * constants) or mouse button codes ({@link NativeMouseEvent} {@code BUTTON*}),
+     * each with a display label.
+     *
+     * <p>Key and mouse lookups are separate because their numeric codes overlap
+     * (for example {@code VC_ESCAPE} and {@code BUTTON1} are both {@code 1}).
      */
     private enum BindingNames {
         // --- Keyboard (NativeKeyEvent.VC_*) ---
@@ -181,8 +195,13 @@ public class Hotkey {
         MOUSEBUTTON4(NativeMouseEvent.BUTTON4, "MOUSEBUTTON4", true),
         MOUSEBUTTON5(NativeMouseEvent.BUTTON5, "MOUSEBUTTON5", true);
 
+        /** Native key code or mouse button code. */
         private final int code;
+
+        /** Human-readable label for UI / logging. */
         private final String text;
+
+        /** {@code true} if this entry is a mouse button, not a key. */
         private final boolean mouse;
 
         BindingNames(int code, String text, boolean mouse) {
@@ -191,10 +210,19 @@ public class Hotkey {
             this.mouse = mouse;
         }
 
+        /**
+         * @return the display label for this binding
+         */
         public String getText() {
             return text;
         }
 
+        /**
+         * Finds a keyboard binding by {@link NativeKeyEvent} key code.
+         *
+         * @param keyCode native virtual key code
+         * @return the matching entry, or {@code null} if unsupported
+         */
         private static BindingNames fromKeyCode(int keyCode) {
             for (BindingNames name : values()) {
                 if (!name.mouse && name.code == keyCode) {
@@ -204,6 +232,12 @@ public class Hotkey {
             return null;
         }
 
+        /**
+         * Finds a mouse binding by {@link NativeMouseEvent} button code.
+         *
+         * @param button native mouse button constant
+         * @return the matching entry, or {@code null} if unsupported
+         */
         private static BindingNames fromMouseButton(int button) {
             for (BindingNames name : values()) {
                 if (name.mouse && name.code == button) {
@@ -214,10 +248,21 @@ public class Hotkey {
         }
     }
 
+    /** Native key code or mouse button code. */
     private final int code;
+
+    /** Display label resolved from {@link BindingNames}. */
     private final String bindingName;
+
+    /** {@code true} if this hotkey is a mouse button. */
     private final boolean isMouseButton;
 
+    /**
+     * Creates a hotkey from a mouse button press.
+     *
+     * @param mouseEvent the native mouse event
+     * @throws IllegalArgumentException if the button is not supported
+     */
     public Hotkey(NativeMouseEvent mouseEvent) {
         this.code = mouseEvent.getButton();
         BindingNames name = BindingNames.fromMouseButton(this.code);
@@ -228,6 +273,12 @@ public class Hotkey {
         this.isMouseButton = true;
     }
 
+    /**
+     * Creates a hotkey from a keyboard press.
+     *
+     * @param keyEvent the native key event
+     * @throws IllegalArgumentException if the key code is not supported
+     */
     public Hotkey(NativeKeyEvent keyEvent) {
         this.code = keyEvent.getKeyCode();
         BindingNames name = BindingNames.fromKeyCode(this.code);
@@ -238,6 +289,13 @@ public class Hotkey {
         this.isMouseButton = false;
     }
 
+    /**
+     * Creates a hotkey from persisted type and code (for example after loading settings).
+     *
+     * @param isMouseButton {@code true} for a mouse button, {@code false} for a key
+     * @param code          native key or mouse button code
+     * @throws IllegalArgumentException if the code is not supported for that type
+     */
     public Hotkey(boolean isMouseButton, int code) {
         BindingNames name = isMouseButton ? BindingNames.fromMouseButton(code) : BindingNames.fromKeyCode(code);
         if (name == null) {
@@ -248,24 +306,44 @@ public class Hotkey {
         this.bindingName = name.getText();
     }
 
+    /**
+     * @return the native key or mouse button code
+     */
     public int getCode() {
         return code;
     }
 
+    /**
+     * @return the display name for this hotkey
+     */
     public String getBindingName() {
         return bindingName;
     }
 
+    /**
+     * @return {@code true} if this hotkey is a mouse button
+     */
     public boolean isMouseButton() {
         return isMouseButton;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Includes display name, input type, and native code.
+     */
     @Override
     public String toString() {
         String type = isMouseButton ? "mouse" : "key";
         return "Hotkey{name='" + bindingName + "', type=" + type + ", code=" + code + "}";
     }
 
+    /**
+     * Two hotkeys are equal when code, mouse/key kind, and binding name all match.
+     *
+     * @param other the object to compare
+     * @return {@code true} if {@code other} is a matching {@code Hotkey}
+     */
     @Override
     public boolean equals(Object other) {
         if (other == null) {

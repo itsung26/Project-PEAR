@@ -108,7 +108,7 @@ public class App extends Application {
 
         TextField hotkeyField = new TextField("Not set");
         hotkeyField.setEditable(false);
-        // Immidiately consume context menu events to prevent the menu from opening on this control.
+        // Immidiately consume context menu events to prevent the menu from opening on the hotkey field.
         hotkeyField.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, e -> e.consume());
         hotkeyField.setFocusTraversable(false);
         hotkeyField.setPrefHeight(36);

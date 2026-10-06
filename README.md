@@ -1,6 +1,8 @@
 # Project PEAR
 
-Open-source network drop simulator for Windows. 
+Open-source network drop simulator for Windows.
+
+Licensed under the [MIT License](LICENSE).
 
 ---
 

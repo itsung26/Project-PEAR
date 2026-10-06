@@ -238,9 +238,32 @@ public class Hotkey {
         this.isMouseButton = false;
     }
 
+    public Hotkey(boolean isMouseButton, int code) {
+        BindingNames name = isMouseButton ? BindingNames.fromMouseButton(code) : BindingNames.fromKeyCode(code);
+        if (name == null) {
+            throw new IllegalArgumentException("Unsupported key code: " + code);
+        }
+        this.code = code;
+        this.isMouseButton = isMouseButton;
+        this.bindingName = name.getText();
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    public boolean isMouseButton() {
+        return isMouseButton;
+    }
+
     @Override
     public String toString() {
-        return "Hotkey [code=" + code + "]";
+        String type = isMouseButton ? "mouse" : "key";
+        return "Hotkey{name='" + bindingName + "', type=" + type + ", code=" + code + "}";
     }
 
     @Override
@@ -253,9 +276,9 @@ public class Hotkey {
             return false;
         }
 
-        if (other.getClass() == this.getClass()) {
-            // placeholder
-        }
-        return false;
+        Hotkey otherHotkey = (Hotkey) other;
+        return otherHotkey.getCode() == this.getCode()
+            && otherHotkey.isMouseButton() == this.isMouseButton()
+            && otherHotkey.getBindingName().equals(this.getBindingName());
     }
 }

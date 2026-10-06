@@ -2,7 +2,10 @@ package com.projectpear;
 
 import java.nio.file.Path;
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,12 +26,32 @@ import javafx.stage.Stage;
 
 public class App extends Application {
     private GlobalInputService Input;
+    private Settings settings;
+    private Button guiHotkeyButton;
+    private TextField guiHotkeyField;
 
     @Override
     public void start(Stage stage) {
+        settings = new Settings();
+        if (settings.saveFileExists()) {
+            settings.load();
+        } else {
+            settings.setBoundHotkey(new Hotkey(false, NativeKeyEvent.VC_0));
+            settings.save();
+        }
+
         buildUi(stage);
+        // Create and configure the main input handler.
+        // Pass event handlers into the input handler.
         Input = new GlobalInputService(
             this::onHotkeyPressed, this::onHotKeyCaptured, true
+        );
+        // Tell the input handler what the initial hotkey is.
+        Input.setHotkey(settings.getBoundHotkey());
+
+        // Update the hotkey readout.
+        Platform.runLater(
+            () -> guiHotkeyField.setText(settings.getBoundHotkey().getBindingName())
         );
     }
 
@@ -80,6 +103,8 @@ public class App extends Application {
         // Uses the default style.
         hotkeyButton.setFocusTraversable(false);
         hotkeyButton.setOnAction(this::onSetHotkeyButtonPressed);
+        // Cache the button for later ui updates.
+        guiHotkeyButton = hotkeyButton;
 
         TextField hotkeyField = new TextField("Not set");
         hotkeyField.setEditable(false);
@@ -98,6 +123,8 @@ public class App extends Application {
             + "-fx-padding: 0 10 0 10;"
         );
         HBox.setHgrow(hotkeyField, Priority.ALWAYS);
+        // Cache the field for later ui updates.
+        guiHotkeyField = hotkeyField;
 
         HBox hotkeyRow = new HBox(0, hotkeyButton, hotkeyField);
         hotkeyRow.setAlignment(Pos.CENTER_LEFT);
@@ -137,15 +164,33 @@ public class App extends Application {
         stage.show();
     }
 
+    // Called when the "Set Hotkey" button is clicked.
     private void onSetHotkeyButtonPressed(ActionEvent event) {
-        
+        Input.setCapturing(true);
+
+        // All UI changes must be deferred in order to be thread safe.
+        // Disable the button to prevent double pressing.
+        Platform.runLater(
+            () -> guiHotkeyButton.setDisable(true)
+        );
     }
 
+    // Called only when the set hotkey is pressed.
     private void onHotkeyPressed(Hotkey hotkey) {
-
+        System.out.println(hotkey.toString() + " hotkey pressed");
     }
 
+    // Called when a button is pressed while the app is listening for a new hotkey to be set.
     private void onHotKeyCaptured(Hotkey hotkey) {
-        System.out.println(hotkey.toString() + " hotkey pressed");
+        settings.setBoundHotkey(hotkey);
+        settings.save();
+        // Update the hotkey readout.
+        Platform.runLater(
+            () -> guiHotkeyField.setText(settings.getBoundHotkey().getBindingName())
+        );
+        // Re-enable the button.
+        Platform.runLater(
+            () -> guiHotkeyButton.setDisable(false)
+        );
     }
 }

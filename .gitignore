@@ -1,4 +1,8 @@
 out/
 *.class
 .settings/
+.vs/
 Config.cfg
+release/
+PEAR/
+dist/

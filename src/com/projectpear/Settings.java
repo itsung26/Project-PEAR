@@ -1,10 +1,11 @@
 package com.projectpear;
 
+
 public class Settings {
     private Hotkey binding;
 
     // public Hotkey loadBinding() {
-    // TODO: Implement
+    // // TODO: Implement
     // }
 
 

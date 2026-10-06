@@ -26,7 +26,6 @@ public class GlobalInputService {
     private final HotkeyCaptureListener captureListener;
     private boolean capturing;
 
-
     /**
      * Creates a new service with key and mouse listeners ready, but does not
      * begin listening until {@link #startListening()} is called.
@@ -54,6 +53,10 @@ public class GlobalInputService {
 
     public void setCapturing(boolean capturing) {
         this.capturing = capturing;
+    }
+
+    public boolean isCapturing() {
+        return capturing;
     }
 
     /**

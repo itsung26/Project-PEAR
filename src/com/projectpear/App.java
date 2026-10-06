@@ -3,6 +3,7 @@ package com.projectpear;
 import java.nio.file.Path;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -78,7 +79,7 @@ public class App extends Application {
         hotkeyButton.setFont(Font.font("Segoe UI", FontWeight.MEDIUM, 13));
         // Uses the default style.
         hotkeyButton.setFocusTraversable(false);
-        // No action wired — visual only
+        hotkeyButton.setOnAction(this::onSetHotkeyButtonPressed);
 
         TextField hotkeyField = new TextField("Not set");
         hotkeyField.setEditable(false);
@@ -136,11 +137,15 @@ public class App extends Application {
         stage.show();
     }
 
-    private void onHotkeyPressed(Hotkey hotkey) {
+    private void onSetHotkeyButtonPressed(ActionEvent event) {
         
     }
 
-    private void onHotKeyCaptured(Hotkey hotkey) {
+    private void onHotkeyPressed(Hotkey hotkey) {
 
+    }
+
+    private void onHotKeyCaptured(Hotkey hotkey) {
+        System.out.println(hotkey.toString() + " hotkey pressed");
     }
 }

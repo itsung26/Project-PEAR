@@ -25,15 +25,40 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+/**
+ * JavaFX entry point for Project PEAR, a Windows lag-switch utility.
+ *
+ * <p>Requires elevated (administrator) privileges. Owns {@link Settings} and
+ * {@link GlobalInputService}, builds the UI, and toggles Windows Firewall
+ * policy when the bound hotkey is pressed.
+ */
 public class App extends Application {
+    /** Global keyboard/mouse input service. */
     private GlobalInputService Input;
+
+    /** Persisted hotkey and related settings. */
     private Settings settings;
+
+    /** Cached hotkey button for enable/disable during capture. */
     private Button guiHotkeyButton;
+
+    /** Cached hotkey display field. */
     private TextField guiHotkeyField;
+
+    /** Cached status bar ({@code statusDot}, {@code statusLabel} as children). */
     private HBox guiStatusBar;
+
+    /** Whether lag (firewall block) is currently active. */
     private boolean lagActive = false;
 
 
+    /**
+     * Starts the app: checks elevation, loads settings, builds UI, and begins
+     * global input listening.
+     *
+     * @param stage primary window
+     * @throws SecurityException if the process is not running elevated
+     */
     @Override
     public void start(Stage stage) {
         if (!isRunningElevated()) {
@@ -68,6 +93,9 @@ public class App extends Application {
 
     }
 
+    /**
+     * Stops global input listening and clears lag/firewall block on exit.
+     */
     @Override
     public void stop() {
         Input.stopListening();
@@ -75,10 +103,20 @@ public class App extends Application {
         System.out.println("Application exit. (Exit code 0)");
     }
 
+    /**
+     * Application entry point; launches JavaFX.
+     *
+     * @param args unused
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Builds and shows the main window UI.
+     *
+     * @param stage primary window
+     */
     private void buildUi(Stage stage) {
         Path assets = Path.of("assets");
         Image pearImage = new Image(assets.resolve("pear.png").toUri().toString());
@@ -180,7 +218,11 @@ public class App extends Application {
         stage.show();
     }
 
-    // Called when the "Set Hotkey" button is clicked.
+    /**
+     * Enters hotkey-capture mode and disables the hotkey button until capture completes.
+     *
+     * @param event button action event
+     */
     private void onSetHotkeyButtonPressed(ActionEvent event) {
         Input.setCapturing(true);
 
@@ -191,12 +233,20 @@ public class App extends Application {
         );
     }
 
-    // Called only when the set hotkey is pressed.
+    /**
+     * Toggles lag when the bound hotkey is pressed (JNativeHook dispatch thread).
+     *
+     * @param hotkey the hotkey that matched
+     */
     private void onHotkeyPressed(Hotkey hotkey) {
         setLagActive(!isLagActive());
     }
 
-    // Called when a button is pressed while the app is listening for a new hotkey to be set.
+    /**
+     * Persists a newly captured hotkey and refreshes the UI.
+     *
+     * @param hotkey the captured binding
+     */
     private void onHotKeyCaptured(Hotkey hotkey) {
         settings.setBoundHotkey(hotkey);
         settings.save();
@@ -210,6 +260,9 @@ public class App extends Application {
         );
     }
 
+    /**
+     * @return {@code true} if this process is running with elevated privileges
+     */
     private boolean isRunningElevated() {
         String ret = WindowsCommandLine.run(WindowsCommandLine.ELEVATED_QUERY).trim();
         if (ret != null) {
@@ -218,10 +271,18 @@ public class App extends Application {
         return false;
     }
 
+    /**
+     * @return {@code true} if lag (firewall block) is active
+     */
     private boolean isLagActive() {
         return lagActive;
     }
 
+    /**
+     * Enables or disables lag by updating the UI and applying firewall policy.
+     *
+     * @param lagActive {@code true} to block traffic, {@code false} to restore policy
+     */
     private void setLagActive(boolean lagActive) {
         this.lagActive = lagActive;
         Platform.runLater(() -> updateGuiStatusBar(lagActive));
@@ -232,6 +293,13 @@ public class App extends Application {
         }
     }
 
+    /**
+     * Updates the status bar label, dot color, and tint for the given lag state.
+     *
+     * <p>Must be called on the JavaFX application thread.
+     *
+     * @param lagState {@code true} for active (green), {@code false} for inactive (red)
+     */
     private void updateGuiStatusBar(boolean lagState) {
         if (guiStatusBar == null || guiStatusBar.getChildren().size() < 2) {
             return;

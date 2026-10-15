@@ -68,7 +68,7 @@ Write-Host "Creating application image"
     --main-jar pear.jar `
     --main-class com.projectpear.App `
     --module-path $ModulePath `
-    --add-modules javafx.controls,javafx.fxml `
+    --add-modules javafx.controls,javafx.fxml,java.logging `
     --java-options "-Djava.library.path=`$APPDIR/../runtime/bin" `
     --app-content "assets"
 if ($LASTEXITCODE -ne 0) { throw "jpackage app-image failed ($LASTEXITCODE)" }

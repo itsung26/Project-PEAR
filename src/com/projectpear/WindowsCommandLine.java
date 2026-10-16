@@ -68,4 +68,31 @@ public final class WindowsCommandLine {
             return "";
         }
     }
+
+    /**
+     * Executes {@code command} via {@code cmd.exe /c}.
+     *
+     * <p>When {@code skipWaitForOutput} is {@code false}, this waits for stdout
+     * the same way as {@link #run(String)}, and the captured text is discarded.
+     * When it is {@code true}, the process is started and this returns without
+     * reading stdout or waiting for exit.
+     *
+     * @param command the command string passed to {@code cmd.exe /c}
+     * @param skipWaitForOutput {@code true} to return as soon as the process starts
+     */
+    public static void run(String command, boolean skipWaitForOutput) {
+        if (!skipWaitForOutput) {
+            run(command);
+            return;
+        }
+
+        ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", command);
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
+        try {
+            pb.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -3,6 +3,7 @@
 package com.projectpear;
 
 import java.nio.file.Path;
+import java.util.logging.*;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 
@@ -26,7 +27,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 /**
  * JavaFX entry point for Project PEAR, a Windows lag-switch utility.
@@ -228,10 +228,7 @@ public class App extends Application {
 
         VBox hotkeyPanel = new VBox(10, bindingCaptionRow, hotkeyRow);
         hotkeyPanel.setPadding(new Insets(14, 14, 14, 14));
-        hotkeyPanel.setStyle(
-            "-fx-background-color: " + ink + ", " + card + ";"
-            + "-fx-background-insets: 0, 1;"
-        );
+        hotkeyPanel.setStyle("-fx-background-color: " + card + ";");
 
         // --- Status / action bar ---
         Label statusDot = new Label("●");
@@ -312,7 +309,7 @@ public class App extends Application {
      * @return {@code true} if this process is running with elevated privileges
      */
     private boolean isRunningElevated() {
-        String ret = WindowsCommandLine.run(WindowsCommandLine.ELEVATED_QUERY, false).trim();
+        String ret = WindowsCommandLine.run(WindowsCommandLine.ELEVATED_QUERY).trim();
         if (ret != null) {
             return ret.equals("Elevated");
         }

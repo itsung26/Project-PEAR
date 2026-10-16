@@ -3,7 +3,6 @@
 package com.projectpear;
 
 import java.nio.file.Path;
-import java.util.logging.*;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 
@@ -112,7 +111,11 @@ public class App extends Application {
      * @param args unused
      */
     public static void main(String[] args) {
-        launch(args);
+        try {
+            launch(args);
+        } catch (Exception e) {
+            AppLogger.logError(e);
+        }
     }
 
     /**

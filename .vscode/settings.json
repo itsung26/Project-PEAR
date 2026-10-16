@@ -1,7 +1,7 @@
 {
     "java.import.maven.enabled": false,
     "java.import.gradle.enabled": false,
-    "java.project.sourcePaths": ["src"],
+    "java.project.sourcePaths": ["src", "test"],
     "java.project.outputPath": "out",
     "java.project.referencedLibraries": {
         "include": [

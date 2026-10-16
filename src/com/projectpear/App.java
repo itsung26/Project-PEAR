@@ -20,7 +20,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -128,11 +127,12 @@ public class App extends Application {
         Image pearImage = new Image(assets.resolve("pear.png").toUri().toString());
         Image pearIcon = new Image(assets.resolve("pear32.png").toUri().toString());
 
-        // Brand colors. Fills stay flat; rules use the ink color.
+        // Brand colors
         String surface = "#F7F8F4";
         String card = "#FFFFFF";
         String ink = "#1B1F16";
         String muted = "#6B7265";
+        String stroke = "#D9DDD2";
 
         // --- Logo (transparent pear, no frame) ---
         ImageView logo = new ImageView(pearImage);
@@ -152,38 +152,13 @@ public class App extends Application {
         VBox header = new VBox(6, logo, title, subtitle);
         header.setAlignment(Pos.CENTER);
 
-        // Single hairline under the title, spanning the content column.
-        Region headerRule = new Region();
-        headerRule.setMinHeight(1);
-        headerRule.setPrefHeight(1);
-        headerRule.setMaxHeight(1);
-        headerRule.setMaxWidth(Double.MAX_VALUE);
-        headerRule.setStyle("-fx-background-color: " + ink + ";");
-
         // --- Hotkey row: button + read-only field (visual only) ---
-        String buttonStyle =
-            "-fx-background-color: %s;"
-            + "-fx-text-fill: " + surface + ";"
-            + "-fx-background-radius: 0;"
-            + "-fx-border-radius: 0;"
-            + "-fx-background-insets: 0;"
-            + "-fx-border-color: %s;"
-            + "-fx-border-width: 1;"
-            + "-fx-padding: 0 12 0 12;"
-            + "-fx-effect: null;"
-            + "-fx-cursor: hand;";
         Button hotkeyButton = new Button("Hotkey");
         hotkeyButton.setPrefHeight(36);
-        hotkeyButton.setMinWidth(88);
+        hotkeyButton.setMinWidth(80);
         hotkeyButton.setFont(Font.font("Segoe UI", FontWeight.MEDIUM, 13));
+        // Uses the default style.
         hotkeyButton.setFocusTraversable(false);
-        hotkeyButton.setStyle(String.format(buttonStyle, ink, ink));
-        hotkeyButton.setOnMouseEntered(e -> {
-            if (!hotkeyButton.isDisabled()) {
-                hotkeyButton.setStyle(String.format(buttonStyle, "#2C3324", "#2C3324"));
-            }
-        });
-        hotkeyButton.setOnMouseExited(e -> hotkeyButton.setStyle(String.format(buttonStyle, ink, ink)));
         hotkeyButton.setOnAction(this::onSetHotkeyButtonPressed);
         // Cache the button for later ui updates.
         guiHotkeyButton = hotkeyButton;
@@ -198,12 +173,11 @@ public class App extends Application {
         hotkeyField.setFont(Font.font("Segoe UI", FontWeight.MEDIUM, 13));
         hotkeyField.setStyle(
             "-fx-background-color: " + card + ";"
-            + "-fx-text-fill: " + ink + ";"
-            + "-fx-border-color: " + ink + ";"
-            + "-fx-border-width: 1 1 1 0;"
+            + "-fx-text-fill: " + muted + ";"
+            + "-fx-border-color: " + stroke + ";"
+            + "-fx-border-width: 1.5;"
             + "-fx-background-radius: 0;"
             + "-fx-border-radius: 0;"
-            + "-fx-background-insets: 0;"
             + "-fx-padding: 0 10 0 10;"
         );
         HBox.setHgrow(hotkeyField, Priority.ALWAYS);
@@ -212,26 +186,8 @@ public class App extends Application {
 
         HBox hotkeyRow = new HBox(0, hotkeyButton, hotkeyField);
         hotkeyRow.setAlignment(Pos.CENTER_LEFT);
-
-        Label bindingCaption = new Label("BINDING");
-        bindingCaption.setFont(Font.font("Segoe UI", FontWeight.SEMI_BOLD, 11));
-        bindingCaption.setTextFill(Color.web(muted));
-        Region bindingRuleLeft = new Region();
-        Region bindingRuleRight = new Region();
-        for (Region rule : new Region[] { bindingRuleLeft, bindingRuleRight }) {
-            rule.setMinHeight(1);
-            rule.setPrefHeight(1);
-            rule.setMaxHeight(1);
-            rule.setMaxWidth(Double.MAX_VALUE);
-            rule.setStyle("-fx-background-color: " + ink + ";");
-            HBox.setHgrow(rule, Priority.ALWAYS);
-        }
-        HBox bindingCaptionRow = new HBox(8, bindingRuleLeft, bindingCaption, bindingRuleRight);
-        bindingCaptionRow.setAlignment(Pos.CENTER);
-
-        VBox hotkeyPanel = new VBox(10, bindingCaptionRow, hotkeyRow);
-        hotkeyPanel.setPadding(new Insets(14, 14, 14, 14));
-        hotkeyPanel.setStyle("-fx-background-color: " + card + ";");
+        hotkeyRow.setPrefWidth(260);
+        hotkeyRow.setMaxWidth(260);
 
         // --- Status / action bar ---
         Label statusDot = new Label("●");
@@ -244,21 +200,23 @@ public class App extends Application {
 
         HBox statusBar = new HBox(10, statusDot, statusLabel);
         statusBar.setAlignment(Pos.CENTER);
-        statusBar.setPrefHeight(52);
-        statusBar.setPadding(new Insets(0, 8, 0, 12));
+        statusBar.setPrefHeight(48);
+        statusBar.setPrefWidth(280);
+        statusBar.setMaxWidth(280);
         statusBar.setStyle(
-            "-fx-background-color: " + ink + ", " + muted + ", " + card + ";"
-            + "-fx-background-insets: 0, 1, 1 1 1 5;"
+            "-fx-background-color: " + card + ";"
+            + "-fx-border-color: " + stroke + ";"
+            + "-fx-border-width: 1.5;"
         );
         // Cache the status bar for later ui updates.
         guiStatusBar = statusBar;
 
-        VBox root = new VBox(16, header, headerRule, hotkeyPanel, statusBar);
+        VBox root = new VBox(28, header, hotkeyRow, statusBar);
         root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(28, 26, 28, 26));
+        root.setPadding(new Insets(36, 28, 36, 28));
         root.setStyle("-fx-background-color: " + surface + ";");
 
-        Scene scene = new Scene(root, 360, 420);
+        Scene scene = new Scene(root, 340, 320);
         stage.setTitle("Project PEAR");
         stage.getIcons().addAll(pearIcon, pearImage);
         stage.setResizable(false);
@@ -360,15 +318,17 @@ public class App extends Application {
             statusLabel.setText("Lag active");
             statusDot.setTextFill(Color.web("#2E7D32"));
             guiStatusBar.setStyle(
-                "-fx-background-color: #1B1F16, #2E7D32, #E8F5E9;"
-                + "-fx-background-insets: 0, 1, 1 1 1 5;"
+                "-fx-background-color: #E8F5E9;"
+                + "-fx-border-color: #A5D6A7;"
+                + "-fx-border-width: 1.5;"
             );
         } else {
             statusLabel.setText("Lag inactive");
             statusDot.setTextFill(Color.web("#C62828"));
             guiStatusBar.setStyle(
-                "-fx-background-color: #1B1F16, #C62828, #FFEBEE;"
-                + "-fx-background-insets: 0, 1, 1 1 1 5;"
+                "-fx-background-color: #FFEBEE;"
+                + "-fx-border-color: #EF9A9A;"
+                + "-fx-border-width: 1.5;"
             );
         }
     }
